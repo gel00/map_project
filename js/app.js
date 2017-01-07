@@ -131,7 +131,6 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.setContent('');
         infowindow.marker = marker;
         // Make sure the marker property is cleared if the infowindow is closed.
-        infowindow.
         infowindow.addListener('closeclick', function() {
             this.marker.setIcon(defaultIcon);
             infowindow.marker = null;
