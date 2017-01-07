@@ -225,7 +225,6 @@ function textSearchPlaces() {
 
 // This function creates markers for each place found in either places search.
 function createMarkersForPlaces(places) {
-    console.log(places);
     var bounds = new google.maps.LatLngBounds();
     placeMarkers = [];
     for (var i = 0; i < places.length; i++) {
