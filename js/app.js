@@ -400,25 +400,24 @@ var ViewModel = function() {
 function loadWiki(location) {
     var wikipediaURL = 'http://hu.wikipedia.org/w/api.php?action=opensearch&search=' + location + '&format=json&callback=wikiCallback';
 
-    var wikiError = setTimeout(function() {
-        $wikiElem.text("Wikipedia Links Are Not Availavle");
-    }, 8000);
-
     $.ajax({
         url: wikipediaURL,
         dataType: "jsonp",
-        success: function(response) {
-            var articleList = response[1];
-            var articleStr = articleList[0];
-            if (articleStr) {
-                var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-                $(".wikiElem").append('<li><a href="' + url + '">' + articleStr + '</a></li>');
-            } else {
-                $(".wikiElem").append('<p>no wikipedia result</p>');
-            }
+        success:
 
 
             clearTimeout(wikiError);
         }
+    }).done(function(response) {
+                var articleList = response[1];
+                var articleStr = articleList[0];
+                if (articleStr) {
+                    var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+                    $(".wikiElem").append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+                } else {
+                    $(".wikiElem").append('<p>no wikipedia result</p>');
+                }
+    }).fail(function(jqXHR, textStatus){
+        alert("Wikipedia Links Are Not Availavle");
     });
 }
