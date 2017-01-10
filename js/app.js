@@ -1,6 +1,6 @@
 var map;
 // Create a new blank array for all locations.
-var locations = []
+var locations = [];
 // Create a new blank array for all the listing markers.
 var markers = [];
 // Create placemarkers array to use in multiple functions to have control
@@ -124,7 +124,7 @@ function googleMapErrorHandler(msg, url, lineNo, columnNo, error) {
     alert("Google maps didn't loaded properly.");
     var string = msg.toLowerCase();
     var substring = "script error";
-    if (string.indexOf(substring) > -1){
+    if (string.indexOf(substring) > -1) {
         console.log('Script Error: See Browser Console for Detail');
     } else {
         var message = [
@@ -140,7 +140,7 @@ function googleMapErrorHandler(msg, url, lineNo, columnNo, error) {
 
 
     return false;
-};
+}
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
@@ -198,10 +198,10 @@ function showListings() {
         bounds.extend(markers[i].position);
     }
     map.fitBounds(bounds);
-     //fitBounds method to make sure map markers always fit on screen as user resizes their browser window
+    //fitBounds method to make sure map markers always fit on screen as user resizes their browser window
     google.maps.event.addDomListener(window, 'resize', function() {
         map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
-}   );
+    });
 }
 
 // This function will loop through the listings and hide them all.
@@ -382,7 +382,7 @@ var ViewModel = function() {
     // This function get the results filtered
     this.filter = function(data, event) {
         filteredList = [];
-        var filter = event.target.value.toUpperCase();;
+        var filter = event.target.value.toUpperCase();
         self.list().forEach(function(elem, index) {
             if (elem.name.toUpperCase().indexOf(filter) > -1) {
                 elem.visibility(true);
@@ -403,18 +403,18 @@ function loadWiki(location, infowindow) {
         url: wikipediaURL,
         dataType: "jsonp"
     }).done(function(response) {
-                var articleList = response[1];
-                var articleStr = articleList[0];
-                var content = infowindow.getContent();
+        var articleList = response[1];
+        var articleStr = articleList[0];
+        var content = infowindow.getContent();
         console.log(content);
-                if (articleStr) {
-                    var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-                    content += '<div><h4>Wikipedia link</h4><a href="' + url + '">' + articleStr + '</a></div>';
-                } else {
-                    content += '<div><h4>Wikipedia link</h4><p>no result</p></div>';
-                }
-                infowindow.setContent(content);
-    }).fail(function(jqXHR, textStatus){
+        if (articleStr) {
+            var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+            content += '<div><h4>Wikipedia link</h4><a href="' + url + '">' + articleStr + '</a></div>';
+        } else {
+            content += '<div><h4>Wikipedia link</h4><p>no result</p></div>';
+        }
+        infowindow.setContent(content);
+    }).fail(function(jqXHR, textStatus) {
         alert("Wikipedia Links Are Not Availavle");
     });
 }
