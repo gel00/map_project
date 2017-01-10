@@ -385,14 +385,13 @@ var ViewModel = function() {
         filteredList = [];
         var filter = event.target.value.toUpperCase();;
         self.list().forEach(function(elem, index) {
-            if (elem.name().toUpperCase().indexOf(filter) > -1) {
+            if (elem.name.toUpperCase().indexOf(filter) > -1) {
                 elem.visibility(true);
-                console.log(index);
-                placeMarkers[index].setMap(map);
+                placeMarkers[index].setVisible(true);
                 filteredList.push(elem.location);
             } else {
                 elem.visibility(false);
-                placeMarkers[index].setMap(null);
+                placeMarkers[index].setVisible(false);
             }
         });
     };
