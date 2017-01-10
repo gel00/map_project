@@ -118,12 +118,6 @@ function initMap() {
 
     // Create locations
     textSearchPlaces();
-
-    //fitBounds method to make sure map markers always fit on screen as user resizes their browser window
-    google.maps.event.addDomListener(window, 'resize', function() {
-    map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
-}   );
-
 }
 
 function googleMapErrorHandler(msg, url, lineNo, columnNo, error) {
@@ -204,6 +198,10 @@ function showListings() {
         bounds.extend(markers[i].position);
     }
     map.fitBounds(bounds);
+     //fitBounds method to make sure map markers always fit on screen as user resizes their browser window
+    google.maps.event.addDomListener(window, 'resize', function() {
+        map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
+}   );
 }
 
 // This function will loop through the listings and hide them all.
