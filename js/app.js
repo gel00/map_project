@@ -119,6 +119,11 @@ function initMap() {
     // Create locations
     textSearchPlaces();
 
+    //fitBounds method to make sure map markers always fit on screen as user resizes their browser window
+    google.maps.event.addDomListener(window, 'resize', function() {
+    map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
+}   );
+
 }
 
 function googleMapErrorHandler(msg, url, lineNo, columnNo, error) {
