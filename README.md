@@ -1,4 +1,4 @@
-# My favororite location in Szeged (Hungary)
+# My favororite locations in Szeged (Hungary)
 
 This is personal portfolio project.
 I created a google map application that represent my favorite places in my city.
