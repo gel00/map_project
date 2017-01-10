@@ -121,6 +121,28 @@ function initMap() {
 
 }
 
+function googleMapErrorHandler(msg, url, lineNo, columnNo, error) {
+    alert("Google maps didn't loaded properly.");
+    var string = msg.toLowerCase();
+    var substring = "script error";
+    if (string.indexOf(substring) > -1){
+        console.log('Script Error: See Browser Console for Detail');
+    } else {
+        var message = [
+            'Message: ' + msg,
+            'URL: ' + url,
+            'Line: ' + lineNo,
+            'Column: ' + columnNo,
+            'Error object: ' + JSON.stringify(error)
+        ].join(' - ');
+
+        console.log(message);
+    }
+
+
+    return false;
+};
+
 // This function populates the infowindow when the marker is clicked. We'll only allow
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
@@ -255,6 +277,7 @@ function createMarkersForPlaces(places) {
             } else {
                 this.setIcon(highlightedIcon);
                 getPlacesDetails(this, placeInfoWindow);
+                map.panTo(marker.getPosition());
             }
         });
 
