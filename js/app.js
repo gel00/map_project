@@ -320,7 +320,7 @@ function getPlacesDetails(marker, infowindow) {
             if (place.name) {
                 innerHTML += '<strong>' + place.name + '</strong>';
                 // Wikipedia request
-                loadWiki(place.name);
+                loadWiki(place.name, infowindow);
             }
             if (place.formatted_address) {
                 innerHTML += '<br>' + place.formatted_address;
@@ -344,7 +344,6 @@ function getPlacesDetails(marker, infowindow) {
                     maxWidth: 200
                 }) + '">';
             }
-            innerHTML += '<div class="wikiElem"></div><br></div>';
             infowindow.setContent(innerHTML);
             infowindow.open(map, marker);
             // Make sure the marker property is cleared if the infowindow is closed.
@@ -397,26 +396,24 @@ var ViewModel = function() {
     };
 };
 // Loads wikipedia article
-function loadWiki(location) {
+function loadWiki(location, infowindow) {
     var wikipediaURL = 'http://hu.wikipedia.org/w/api.php?action=opensearch&search=' + location + '&format=json&callback=wikiCallback';
 
     $.ajax({
         url: wikipediaURL,
-        dataType: "jsonp",
-        success:
-
-
-            clearTimeout(wikiError);
-        }
+        dataType: "jsonp"
     }).done(function(response) {
                 var articleList = response[1];
                 var articleStr = articleList[0];
+                var content = infowindow.getContent();
+        console.log(content);
                 if (articleStr) {
                     var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-                    $(".wikiElem").append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+                    content += '<div><h4>Wikipedia link</h4><a href="' + url + '">' + articleStr + '</a></div>';
                 } else {
-                    $(".wikiElem").append('<p>no wikipedia result</p>');
+                    content += '<div><h4>Wikipedia link</h4><p>no result</p></div>';
                 }
+                infowindow.setContent(content);
     }).fail(function(jqXHR, textStatus){
         alert("Wikipedia Links Are Not Availavle");
     });
