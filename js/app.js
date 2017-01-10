@@ -251,6 +251,11 @@ function textSearchPlaces() {
 function createMarkersForPlaces(places) {
     var bounds = new google.maps.LatLngBounds();
     placeMarkers = [];
+    // Create a single infowindow to be used with the place details information
+    // so that only one is open at once.
+    var placeInfoWindow = new google.maps.InfoWindow();
+    // If a marker is clicked, do a place details search on it in the next function.
+
     for (var i = 0; i < places.length; i++) {
         var place = places[i];
         var icon = {
@@ -268,11 +273,6 @@ function createMarkersForPlaces(places) {
             position: place.geometry.location,
             id: place.place_id
         });
-
-        // Create a single infowindow to be used with the place details information
-        // so that only one is open at once.
-        var placeInfoWindow = new google.maps.InfoWindow();
-        // If a marker is clicked, do a place details search on it in the next function.
 
         marker.addListener('click', function() {
             if (placeInfoWindow.marker == this) {
@@ -350,8 +350,11 @@ function getPlacesDetails(marker, infowindow) {
             // Make sure the marker property is cleared if the infowindow is closed.
             infowindow.addListener('closeclick', function() {
                 this.marker.setIcon(defaultIcon);
+                infowindow.close();
                 infowindow.marker = null;
             });
+        } else {
+            console.log("Failed to get places details");
         }
     });
 }
@@ -360,7 +363,7 @@ function getPlacesDetails(marker, infowindow) {
 // Construtor for places
 var Elem = function(elem) {
     this.location = elem;
-    this.name = ko.observable(elem.name);
+    this.name = elem.name;
     // Show infoWindow when clicked
     this.show = function() {
         var index = locations.indexOf(elem);
