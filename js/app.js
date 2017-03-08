@@ -1,6 +1,6 @@
 var map;
 // Create a new blank array for all locations.
-var locations = [];
+var locations = []
 // Create a new blank array for all the listing markers.
 var markers = [];
 // Create placemarkers array to use in multiple functions to have control
@@ -118,28 +118,7 @@ function initMap() {
 
     // Create locations
     textSearchPlaces();
-}
 
-function googleMapErrorHandler(msg, url, lineNo, columnNo, error) {
-    alert("Google maps didn't loaded properly.");
-    var string = msg.toLowerCase();
-    var substring = "script error";
-    if (string.indexOf(substring) > -1) {
-        console.log('Script Error: See Browser Console for Detail');
-    } else {
-        var message = [
-            'Message: ' + msg,
-            'URL: ' + url,
-            'Line: ' + lineNo,
-            'Column: ' + columnNo,
-            'Error object: ' + JSON.stringify(error)
-        ].join(' - ');
-
-        console.log(message);
-    }
-
-
-    return false;
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -153,7 +132,7 @@ function populateInfoWindow(marker, infowindow) {
         infowindow.marker = marker;
         // Make sure the marker property is cleared if the infowindow is closed.
         infowindow.addListener('closeclick', function() {
-            this.marker.setIcon(defaultIcon);
+            //this.marker.setIcon(defaultIcon);
             infowindow.marker = null;
         });
         var streetViewService = new google.maps.StreetViewService();
@@ -198,10 +177,6 @@ function showListings() {
         bounds.extend(markers[i].position);
     }
     map.fitBounds(bounds);
-    //fitBounds method to make sure map markers always fit on screen as user resizes their browser window
-    google.maps.event.addDomListener(window, 'resize', function() {
-        map.fitBounds(bounds); // `bounds` is a `LatLngBounds` object
-    });
 }
 
 // This function will loop through the listings and hide them all.
@@ -249,13 +224,9 @@ function textSearchPlaces() {
 
 // This function creates markers for each place found in either places search.
 function createMarkersForPlaces(places) {
+    console.log(places);
     var bounds = new google.maps.LatLngBounds();
     placeMarkers = [];
-    // Create a single infowindow to be used with the place details information
-    // so that only one is open at once.
-    var placeInfoWindow = new google.maps.InfoWindow();
-    // If a marker is clicked, do a place details search on it in the next function.
-
     for (var i = 0; i < places.length; i++) {
         var place = places[i];
         var icon = {
@@ -274,13 +245,17 @@ function createMarkersForPlaces(places) {
             id: place.place_id
         });
 
+        // Create a single infowindow to be used with the place details information
+        // so that only one is open at once.
+        var placeInfoWindow = new google.maps.InfoWindow();
+        // If a marker is clicked, do a place details search on it in the next function.
+
         marker.addListener('click', function() {
             if (placeInfoWindow.marker == this) {
                 console.log("This infowindow already is on this marker!");
             } else {
                 this.setIcon(highlightedIcon);
                 getPlacesDetails(this, placeInfoWindow);
-                map.panTo(marker.getPosition());
             }
         });
 
@@ -308,6 +283,7 @@ function createMarkersForPlaces(places) {
 function getPlacesDetails(marker, infowindow) {
     if (infowindow.marker) {
         infowindow.marker.setIcon(defaultIcon);
+        console.log("good");
     }
     var service = new google.maps.places.PlacesService(map);
     service.getDetails({
@@ -320,7 +296,7 @@ function getPlacesDetails(marker, infowindow) {
             if (place.name) {
                 innerHTML += '<strong>' + place.name + '</strong>';
                 // Wikipedia request
-                loadWiki(place.name, infowindow);
+                loadWiki(place.name);
             }
             if (place.formatted_address) {
                 innerHTML += '<br>' + place.formatted_address;
@@ -344,16 +320,14 @@ function getPlacesDetails(marker, infowindow) {
                     maxWidth: 200
                 }) + '">';
             }
+            innerHTML += '<div class="wikiElem"></div><br></div>';
             infowindow.setContent(innerHTML);
             infowindow.open(map, marker);
             // Make sure the marker property is cleared if the infowindow is closed.
             infowindow.addListener('closeclick', function() {
                 this.marker.setIcon(defaultIcon);
-                infowindow.close();
                 infowindow.marker = null;
             });
-        } else {
-            console.log("Failed to get places details");
         }
     });
 }
@@ -362,7 +336,7 @@ function getPlacesDetails(marker, infowindow) {
 // Construtor for places
 var Elem = function(elem) {
     this.location = elem;
-    this.name = elem.name;
+    this.name = ko.observable(elem.name);
     // Show infoWindow when clicked
     this.show = function() {
         var index = locations.indexOf(elem);
@@ -382,39 +356,43 @@ var ViewModel = function() {
     // This function get the results filtered
     this.filter = function(data, event) {
         filteredList = [];
-        var filter = event.target.value.toUpperCase();
+        var filter = event.target.value.toUpperCase();;
         self.list().forEach(function(elem, index) {
-            if (elem.name.toUpperCase().indexOf(filter) > -1) {
+            if (elem.name().toUpperCase().indexOf(filter) > -1) {
                 elem.visibility(true);
-                placeMarkers[index].setVisible(true);
+                console.log(index);
+                placeMarkers[index].setMap(map);
                 filteredList.push(elem.location);
             } else {
                 elem.visibility(false);
-                placeMarkers[index].setVisible(false);
+                placeMarkers[index].setMap(null);
             }
         });
     };
 };
 // Loads wikipedia article
-function loadWiki(location, infowindow) {
+function loadWiki(location) {
     var wikipediaURL = 'http://hu.wikipedia.org/w/api.php?action=opensearch&search=' + location + '&format=json&callback=wikiCallback';
+
+    var wikiError = setTimeout(function() {
+        $wikiElem.text("Wikipedia Links Are Not Availavle");
+    }, 8000);
 
     $.ajax({
         url: wikipediaURL,
-        dataType: "jsonp"
-    }).done(function(response) {
-        var articleList = response[1];
-        var articleStr = articleList[0];
-        var content = infowindow.getContent();
-        console.log(content);
-        if (articleStr) {
-            var url = 'http://en.wikipedia.org/wiki/' + articleStr;
-            content += '<div><h4>Wikipedia link</h4><a href="' + url + '">' + articleStr + '</a></div>';
-        } else {
-            content += '<div><h4>Wikipedia link</h4><p>no result</p></div>';
+        dataType: "jsonp",
+        success: function(response) {
+            var articleList = response[1];
+            var articleStr = articleList[0];
+            if (articleStr) {
+                var url = 'http://en.wikipedia.org/wiki/' + articleStr;
+                $(".wikiElem").append('<li><a href="' + url + '">' + articleStr + '</a></li>');
+            } else {
+                $(".wikiElem").append('<p>no wikipedia result</p>');
+            }
+
+
+            clearTimeout(wikiError);
         }
-        infowindow.setContent(content);
-    }).fail(function(jqXHR, textStatus) {
-        alert("Wikipedia Links Are Not Availavle");
     });
 }
