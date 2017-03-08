@@ -8,15 +8,11 @@
     <link rel="stylesheet" href="css/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.1/knockout-min.js"></script>
-    <script src="js/app.js"></script>
-
-    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry&key=AIzaSyB178qw5XEjG-eDUHtvYdaIBvaT5ZzDqYw&callback=initMap" onerror="googleMapErrorHandler()">
-    </script>
 </head>
 
 <body>
     <div class="container">
-        <aside class="options-box">
+        <div class="options-box">
             <input type="text" id="myInput" placeholder="Search for names.." data-bind="event: { keyup: filter }">
             <div id="list">
                 <ol id="locations" data-bind="foreach: list">
@@ -25,9 +21,15 @@
                     </li>
                 </ol>
             </div>
-        </aside>
+        </div>
         <div id="map"></div>
     </div>
+    <script src="js/app.js"></script>
+
+    <script async defer src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry&key=AIzaSyB178qw5XEjG-eDUHtvYdaIBvaT5ZzDqYw&callback=initMap">
+    </script>
+
 </body>
 
 </html>
+
